@@ -3,7 +3,6 @@
 
 import datetime, xmltv
 
-from pprint import pprint
 from operator import itemgetter
 from collections import namedtuple
 
