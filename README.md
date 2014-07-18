@@ -18,4 +18,4 @@ I want to start doing something with whatisonthe.tv again - so will use this as 
 
 ## Links
 
-[https://github.com/swmcc/xmltvparser/issues](TODOS) 
+[TODOS](https://github.com/swmcc/xmltvparser/issues)
