@@ -1,2 +1,2 @@
 test:
-	python parse.py --file=tests/fixtures/tv.xml
+	python parse.py --file=tests/fixtures/tv.xml --destination=output/

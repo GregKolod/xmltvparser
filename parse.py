@@ -18,6 +18,9 @@ def parse_args():
     parser.add_option("-f", "--file", dest="filename",
         help="location of xml", metavar="FILE")
 
+    parser.add_option("-d", "--destination", dest="destination",
+        help="location of output files", metavar="FILE")
+
     return parser.parse_args()
 
 def parse_channels():
@@ -72,13 +75,16 @@ def output_json():
     channels_output = [{'id': CHANNELS[id].id, 'name': CHANNELS[id].name, \
         'icon': CHANNELS[id].icon} for id in CHANNELS]
 
-    with open(os.path.join('/tmp', 'channels.json'), 'w') as f:
+    with open(os.path.join(options.destination, 'channels.json'), 'w') as f:
         f.write(json.dumps(channels_output, sort_keys=True, indent=2))
 
 if __name__ == "__main__":
     (options, args) = parse_args()
     if os.path.exists(options.filename):
         filename = options.filename
+
+    if not os.path.exists(options.destination):
+        os.makedirs(options.destination)
 
     CHANNELS = parse_channels()
     BROADCASTS = parse_broadcasts()
