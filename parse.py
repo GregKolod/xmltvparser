@@ -1,17 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from libs.models import Channel, BroadCast
+
 import datetime, json, os, xmltv
 
 from operator import itemgetter
 from optparse import OptionParser
-
-class Channel():
-
-    def __init__(self, id, name, icon):
-        self.id = id
-        self.name = name
-        self.icon = icon
 
 def parse_args():
     parser = OptionParser()
@@ -88,5 +83,7 @@ if __name__ == "__main__":
 
     CHANNELS = parse_channels()
     BROADCASTS = parse_broadcasts()
+
+
 
     output_json()
