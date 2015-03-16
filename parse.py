@@ -1,15 +1,17 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import datetime, os, xmltv
+import datetime, json, os, xmltv
 
-from collections import namedtuple
 from operator import itemgetter
 from optparse import OptionParser
 
-Channel = namedtuple('Channel', [
-    'id', 'name', 'icon'
-])
+class Channel():
+
+    def __init__(self, id, name, icon):
+        self.id = id
+        self.name = name
+        self.icon = icon
 
 def parse_args():
     parser = OptionParser()
@@ -26,9 +28,8 @@ def parse_channels():
         src  = key['icon'][0]['src']
         name = name[0]
 
-        rec = dict(zip(Channel._fields, [id, name, src]))
-        channel = Channel(**rec)
-        channels[channel.id] = channel
+        c = Channel(id, name, src)
+        channels[c.id] = c
 
     return channels
 
@@ -45,13 +46,14 @@ def parse_broadcasts():
     return broadcasts
 
 def retrieve_broadcast(element):
-        return {
-            'channel': retrieve_channel(element['channel']),
-            'blurb': retrieve_blurb(element),
-            'title': retrieve_title(element),
-            'start_time': format_time(element['start']),
-            'end_time': format_time(element['stop']),
-        }
+    channel = retrieve_channel(element['channel'])
+    return {
+        'channel': channel.id,
+        'blurb': retrieve_blurb(element),
+        'title': retrieve_title(element),
+        'start_time': format_time(element['start']),
+        'end_time': format_time(element['stop']),
+    }
 
 def retrieve_title(element):
     titles = map(itemgetter(0), element['title'])
@@ -73,4 +75,8 @@ if __name__ == "__main__":
 
     CHANNELS = parse_channels()
     BROADCASTS = parse_broadcasts()
+
     print BROADCASTS
+    #print json.dumps(CHANNELS)
+    #with open(os.path.join('/tmp', 'tv.json'), 'w') as f:
+    #   f.write(json.dumps(BROADCASTS, sort_keys=True, indent=2 * ' '))
