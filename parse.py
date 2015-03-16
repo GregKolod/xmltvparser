@@ -38,13 +38,13 @@ def parse_broadcasts():
         channel = retrieve_channel(element['channel'])
         start_time =  format_time(element['start'])
         end_time =  format_time(element['stop'])
-        key = '%s:%s' % (channel.id,start_time.strftime("%Y%m%d%H%M%S"))
+        key = '%s:%s' % (channel.id,start_time.strftime("%Y%m%d%R"))
 
         b = BroadCast(id = key, channel = channel.id, \
             blurb = retrieve_blurb(element), \
             title = retrieve_title(element), \
-            start_time = start_time.strftime("%Y-%m-%d %H:%M:%S"),
-            end_time = end_time.strftime("%Y-%m-%d %H:%M:%S"))
+            start_time = start_time.strftime("%Y-%m-%d %R"),
+            end_time = end_time.strftime("%Y-%m-%d %R"))
 
         broadcasts[key] = b
 
@@ -61,7 +61,7 @@ def retrieve_blurb(element):
     return ''
 
 def format_time(timestamp):
-    return datetime.datetime.strptime(timestamp[:12], "%Y%m%d%H%M%S")
+    return datetime.datetime.strptime(timestamp[:12], "%Y%m%d%H%M")
 
 def output_json():
     channels_output = [{'id': CHANNELS[id].id, 'name': CHANNELS[id].name, \
@@ -69,6 +69,9 @@ def output_json():
 
     with open(os.path.join(options.destination, 'channels.json'), 'w') as f:
         f.write(json.dumps(channels_output, sort_keys=True, indent=2))
+
+    for key in sorted(BROADCASTS):
+        print "%s %s %s" % (BROADCASTS[key].channel, BROADCASTS[key].title, BROADCASTS[key].start_time)
 
 if __name__ == "__main__":
     (options, args) = parse_args()
