@@ -45,20 +45,23 @@ def parse_broadcasts():
     return broadcasts
 
 def retrieve_broadcast(element):
-        #titles = map(itemgetter(0), element['title'])
-
         return {
             'channel': retrieve_channel(element['channel']),
-            #'blurb': _retrieve_blurb(element),
+            'blurb': retrieve_blurb(element),
             'title': retrieve_title(element),
             'start_time': format_time(element['start']),
             'end_time': format_time(element['stop']),
         }
-        #print "%s - %s - %s - %s" % (titles[0], channel.name, format_time(key['start']), format_time(key['stop']))
 
 def retrieve_title(element):
     titles = map(itemgetter(0), element['title'])
     return titles[0]
+
+def retrieve_blurb(element):
+    if 'desc' in element:
+        desc = map(itemgetter(0), element['desc'])
+        return desc[0]
+    return ''
 
 def format_time(timestamp):
     return datetime.datetime.strptime(timestamp[:12], "%Y%m%d%H%M%S")
