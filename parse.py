@@ -25,7 +25,7 @@ def channels():
 
     return channels
 
-def create_channel(id):
+def retrieve_channel(id):
     return CHANNELS[id]
 
 def format_time(timestamp):
@@ -45,7 +45,7 @@ if __name__ == "__main__":
 
     CHANNELS = channels()
     for key in xmltv.read_programmes(open(filename, 'r')):
-        channel = create_channel(key['channel'])
+        channel = retrieve_channel(key['channel'])
         titles = map(itemgetter(0), key['title'])
 
         print "%s - %s - %s - %s" % (titles[0], channel.name, format_time(key['start']), format_time(key['stop']))
