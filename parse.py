@@ -28,7 +28,7 @@ def parse_channels():
         src  = key['icon'][0]['src']
         name = name[0]
 
-        c = Channel(id, name, src)
+        c = Channel(id=id, name=name, icon=src)
         channels[c.id] = c
 
     return channels
@@ -68,6 +68,12 @@ def retrieve_blurb(element):
 def format_time(timestamp):
     return datetime.datetime.strptime(timestamp[:12], "%Y%m%d%H%M%S")
 
+def output_json():
+    channels_output = [{'id': CHANNELS[id].id, 'name': CHANNELS[id].name, \
+        'icon': CHANNELS[id].icon} for id in CHANNELS]
+
+    print json.dumps(channels_output)
+
 if __name__ == "__main__":
     (options, args) = parse_args()
     if os.path.exists(options.filename):
@@ -76,7 +82,4 @@ if __name__ == "__main__":
     CHANNELS = parse_channels()
     BROADCASTS = parse_broadcasts()
 
-    print BROADCASTS
-    #print json.dumps(CHANNELS)
-    #with open(os.path.join('/tmp', 'tv.json'), 'w') as f:
-    #   f.write(json.dumps(BROADCASTS, sort_keys=True, indent=2 * ' '))
+    output_json()
