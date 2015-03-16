@@ -6,7 +6,7 @@ import datetime, xmltv
 from operator import itemgetter
 from collections import namedtuple
 
-filename = "tv.xml"
+filename = "tests/fixtures/tv.xml"
 
 Channel = namedtuple('Channel', [
     'id', 'name', 'icon'
