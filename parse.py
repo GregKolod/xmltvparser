@@ -1,12 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import datetime, xmltv
+import datetime, os, xmltv
 
-from operator import itemgetter
 from collections import namedtuple
-
-filename = "tests/fixtures/tv.xml"
+from operator import itemgetter
+from optparse import OptionParser
 
 Channel = namedtuple('Channel', [
     'id', 'name', 'icon'
@@ -26,15 +25,25 @@ def channels():
 
     return channels
 
-CHANNELS = channels()
-
 def create_channel(id):
     return CHANNELS[id]
 
 def format_time(timestamp):
     return datetime.datetime.strptime(timestamp[:12], "%Y%m%d%H%M%S")
 
+def parse_args():
+    parser = OptionParser()
+    parser.add_option("-f", "--file", dest="filename",
+        help="location of xml", metavar="FILE")
+
+    return parser.parse_args()
+
 if __name__ == "__main__":
+    (options, args) = parse_args()
+    if os.path.exists(options.filename):
+        filename = options.filename
+
+    CHANNELS = channels()
     for key in xmltv.read_programmes(open(filename, 'r')):
         channel = create_channel(key['channel'])
         titles = map(itemgetter(0), key['title'])

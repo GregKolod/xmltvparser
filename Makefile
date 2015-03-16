@@ -1,2 +1,2 @@
 test:
-	python parse.py	
+	python parse.py --file=tests/fixtures/tv.xml
