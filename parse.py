@@ -35,19 +35,20 @@ def parse_broadcasts():
     ctr = 0
     for element in xmltv.read_programmes(open(filename, 'r')):
         ctr += 1
-        broadcasts[ctr] = retrieve_broadcast(element)
+        channel = retrieve_channel(element['channel'])
+        start_time =  format_time(element['start'])
+        end_time =  format_time(element['stop'])
+        key = '%s:%s' % (channel.id,start_time.strftime("%Y%m%d%H%M%S"))
+
+        b = BroadCast(id = key, channel = channel.id, \
+            blurb = retrieve_blurb(element), \
+            title = retrieve_title(element), \
+            start_time = start_time.strftime("%Y-%m-%d %H:%M:%S"),
+            end_time = end_time.strftime("%Y-%m-%d %H:%M:%S"))
+
+        broadcasts[key] = b
 
     return broadcasts
-
-def retrieve_broadcast(element):
-    channel = retrieve_channel(element['channel'])
-    return {
-        'channel': channel.id,
-        'blurb': retrieve_blurb(element),
-        'title': retrieve_title(element),
-        'start_time': format_time(element['start']),
-        'end_time': format_time(element['stop']),
-    }
 
 def retrieve_title(element):
     titles = map(itemgetter(0), element['title'])
@@ -79,7 +80,5 @@ if __name__ == "__main__":
 
     CHANNELS = parse_channels()
     BROADCASTS = parse_broadcasts()
-
-
 
     output_json()

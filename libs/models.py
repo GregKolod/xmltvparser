@@ -7,10 +7,10 @@ class Channel():
 
 class BroadCast():
 
-    def __init__(self, id, channel, blurb, title, start_time, end_time):
+    def __init__(self, id, channel, title, start_time, end_time, blurb):
         self.id = id
-        self.channel = name
-        self.blurb = blurb
+        self.channel = channel
         self.title = title
         self.start_time = start_time
         self.end_time = end_time
+        self.blurb = blurb
