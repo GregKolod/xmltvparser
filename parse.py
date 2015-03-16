@@ -72,7 +72,8 @@ def output_json():
     channels_output = [{'id': CHANNELS[id].id, 'name': CHANNELS[id].name, \
         'icon': CHANNELS[id].icon} for id in CHANNELS]
 
-    print json.dumps(channels_output)
+    with open(os.path.join('/tmp', 'channels.json'), 'w') as f:
+        f.write(json.dumps(channels_output, sort_keys=True, indent=2))
 
 if __name__ == "__main__":
     (options, args) = parse_args()
