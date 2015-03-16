@@ -13,3 +13,4 @@ class BroadCast():
         self.blurb = blurb
         self.title = title
         self.start_time = start_time
+        self.end_time = end_time

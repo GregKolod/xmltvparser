@@ -21,12 +21,8 @@ def parse_args():
 def parse_channels():
     channels = {}
     for key in xmltv.read_channels(open(filename, 'r')):
-        name = map(itemgetter(0), key['display-name'])
-        id   = key['id']
-        src  = key['icon'][0]['src']
-        name = name[0]
-
-        c = Channel(id=id, name=name, icon=src)
+        c = Channel(id = key['id'], icon = key['icon'][0]['src'], \
+                name = map(itemgetter(0), key['display-name'])[0])
         channels[c.id] = c
 
     return channels
