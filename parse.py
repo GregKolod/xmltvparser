@@ -72,20 +72,26 @@ def output_json():
     f.close()
 
     channel = ''
-    broadcasts = {}
+    channels = {}
+    broadcasts = []
     for key in sorted(BROADCASTS):
         b = BROADCASTS[key]
         if channel != b.channel:
+            channels[channel] = broadcasts
             channel = b.channel
-            file = '%s.json' % (b.channel)
-            with open(os.path.join(options.destination, file), 'a') as f:
-                broadcasts[b.id] = {
-                    'title': b.title,
-                    'start_time': b.start_time,
-                    'end_time': b.end_time,
-                }
+            broadcasts = []
 
-                f.write(json.dumps(broadcasts, sort_keys=True, indent=2))
+        broadcasts.append({
+            'title': b.title,
+            'start_time': b.start_time,
+            'end_time': b.end_time,
+        })
+
+    for channel, broadcasts_output in channels.items():
+        print channel
+        with open(os.path.join(options.destination, '%s.json' % channel), 'w') as f:
+            f.write(json.dumps(broadcasts_output, sort_keys=True, indent=2))
+        f.close()
 
 
 if __name__ == "__main__":
