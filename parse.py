@@ -38,7 +38,7 @@ def parse_broadcasts():
         channel = retrieve_channel(element['channel'])
         start_time =  format_time(element['start'])
         end_time =  format_time(element['stop'])
-        key = '%s:%s' % (channel.id,start_time.strftime("%Y%m%d%R"))
+        key = '%s:%s' % (channel.id,start_time.strftime("%Y%m%d%H%M%S"))
 
         b = BroadCast(id = key, channel = channel.id, \
             blurb = retrieve_blurb(element), \
@@ -69,9 +69,24 @@ def output_json():
 
     with open(os.path.join(options.destination, 'channels.json'), 'w') as f:
         f.write(json.dumps(channels_output, sort_keys=True, indent=2))
+    f.close()
 
+    channel = ''
+    broadcasts = {}
     for key in sorted(BROADCASTS):
-        print "%s %s %s" % (BROADCASTS[key].channel, BROADCASTS[key].title, BROADCASTS[key].start_time)
+        b = BROADCASTS[key]
+        if channel != b.channel:
+            channel = b.channel
+            file = '%s.json' % (b.channel)
+            with open(os.path.join(options.destination, file), 'a') as f:
+                broadcasts[b.id] = {
+                    'title': b.title,
+                    'start_time': b.start_time,
+                    'end_time': b.end_time,
+                }
+
+                f.write(json.dumps(broadcasts, sort_keys=True, indent=2))
+
 
 if __name__ == "__main__":
     (options, args) = parse_args()
