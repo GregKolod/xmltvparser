@@ -45,9 +45,12 @@ def parse_broadcasts():
 
     return broadcasts
 
+PROGRAMMES = {}
 def retrieve_title(element):
     titles = map(itemgetter(0), element['title'])
-    return titles[0]
+    title = titles[0]
+    PROGRAMMES[title] = 1
+    return title
 
 def retrieve_blurb(element):
     if 'desc' in element:
@@ -68,6 +71,11 @@ def output_json():
 
     with open(os.path.join(options.destination, 'broadcasts.json'), 'w') as f:
         f.write(json.dumps(BROADCASTS, sort_keys=True, indent=2))
+    f.close()
+
+    programmes_output = [{'title': title} for title in PROGRAMMES]
+    with open(os.path.join(options.destination, 'programmes.json'), 'w') as f:
+        f.write(json.dumps(programmes_output, sort_keys=True, indent=2))
     f.close()
 
 if __name__ == "__main__":
