@@ -31,22 +31,17 @@ def retrieve_channel(id):
     return CHANNELS[id]
 
 def parse_broadcasts():
-    broadcasts = {}
-    ctr = 0
+    broadcasts = []
     for element in xmltv.read_programmes(open(filename, 'r')):
-        ctr += 1
         channel = retrieve_channel(element['channel'])
-        start_time =  format_time(element['start'])
-        end_time =  format_time(element['stop'])
-        key = '%s:%s' % (channel.id,start_time.strftime("%Y%m%d%H%M%S"))
 
-        b = BroadCast(id = key, channel = channel.id, \
-            blurb = retrieve_blurb(element), \
-            title = retrieve_title(element), \
-            start_time = start_time.strftime("%Y-%m-%d %R"),
-            end_time = end_time.strftime("%Y-%m-%d %R"))
-
-        broadcasts[key] = b
+        broadcasts.append({
+            'channel': channel.id,
+            'title': retrieve_title(element),
+            'start_time': format_time(element['start']).strftime("%Y-%m-%d %H:%M"),
+            'end_time': format_time(element['stop']).strftime("%Y-%m-%d %H:%M"),
+            'blurb': retrieve_blurb(element)
+        })
 
     return broadcasts
 
@@ -71,28 +66,9 @@ def output_json():
         f.write(json.dumps(channels_output, sort_keys=True, indent=2))
     f.close()
 
-    channel = ''
-    channels = {}
-    broadcasts = []
-    for key in sorted(BROADCASTS):
-        b = BROADCASTS[key]
-        if channel != b.channel:
-            channels[channel] = broadcasts
-            channel = b.channel
-            broadcasts = []
-
-        broadcasts.append({
-            'title': b.title,
-            'start_time': b.start_time,
-            'end_time': b.end_time,
-        })
-
-    for channel, broadcasts_output in channels.items():
-        print channel
-        with open(os.path.join(options.destination, '%s.json' % channel), 'w') as f:
-            f.write(json.dumps(broadcasts_output, sort_keys=True, indent=2))
-        f.close()
-
+    with open(os.path.join(options.destination, 'broadcasts.json'), 'w') as f:
+        f.write(json.dumps(BROADCASTS, sort_keys=True, indent=2))
+    f.close()
 
 if __name__ == "__main__":
     (options, args) = parse_args()
@@ -104,5 +80,4 @@ if __name__ == "__main__":
 
     CHANNELS = parse_channels()
     BROADCASTS = parse_broadcasts()
-
     output_json()
