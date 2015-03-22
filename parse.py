@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from libs.models import Channel, BroadCast
-
 import datetime, json, os, xmltv
 
 from operator import itemgetter
@@ -21,9 +19,11 @@ def parse_args():
 def parse_channels():
     channels = {}
     for key in xmltv.read_channels(open(filename, 'r')):
-        c = Channel(id = key['id'], icon = key['icon'][0]['src'], \
-                name = map(itemgetter(0), key['display-name'])[0])
-        channels[c.id] = c
+        channels[key['id']] = {
+                'id': key['id'],
+                'icon': key['icon'][0]['src'],
+                'name': map(itemgetter(0), key['display-name'])[0]
+        }
 
     return channels
 
@@ -36,7 +36,7 @@ def parse_broadcasts():
         channel = retrieve_channel(element['channel'])
 
         broadcasts.append({
-            'channel': channel.id,
+            'channel': channel['id'],
             'title': retrieve_title(element),
             'start_time': format_time(element['start']).strftime("%Y-%m-%d %H:%M"),
             'end_time': format_time(element['stop']).strftime("%Y-%m-%d %H:%M"),
@@ -59,8 +59,8 @@ def format_time(timestamp):
     return datetime.datetime.strptime(timestamp[:12], "%Y%m%d%H%M")
 
 def output_json():
-    channels_output = [{'id': CHANNELS[id].id, 'name': CHANNELS[id].name, \
-        'icon': CHANNELS[id].icon} for id in CHANNELS]
+    channels_output = [{'id': CHANNELS[id], 'name': CHANNELS[id]['name'], \
+        'icon': CHANNELS[id]['icon']} for id in CHANNELS]
 
     with open(os.path.join(options.destination, 'channels.json'), 'w') as f:
         f.write(json.dumps(channels_output, sort_keys=True, indent=2))
